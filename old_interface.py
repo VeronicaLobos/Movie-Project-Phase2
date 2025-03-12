@@ -1,3 +1,5 @@
+import sys
+
 def command_dispatcher(user_input):
     """
     Pairs the menu options (key) with the functions
@@ -8,10 +10,10 @@ def command_dispatcher(user_input):
 
     commands = {
         0: exit_my_movies,  # movie_phase1
-        1: storage_json.list_movies,  # movie_phase2
-        2: storage_json.add_movie,  # movie_phase2
-        3: storage_json.delete_movie,  # movie_phase2
-        4: storage_json.update_movie,  # movie_phase2
+        1: ....list_movies,  # movie_phase2
+        2: ....add_movie,  # movie_phase2
+        3: ....delete_movie,  # movie_phase2
+        4: ....update_movie,  # movie_phase2
     #    5: movie_stats.show_stats,  # movie_phase1
     #    6: movie_stats.random_movie,  # movie_phase1
     #    7: movie_stats.search_movie,  # movie_phase1

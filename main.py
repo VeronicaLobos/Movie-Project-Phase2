@@ -71,8 +71,8 @@ def _print_movies(movies):
 
 
 if __name__ == "__main__":
-    movie_data = StorageJson('movies.json')
-    ## movie_data.add_movie('Up', 2009, 8.3, None)
-    ## movie_data.delete_movie('Up')
-    ## movie_data.update_movie('Up', 8.5)
-    _print_movies(movie_data)
+    storage = StorageJson('data/movies.json')
+    ## storage.add_movie('Up', 2009, 8.3, None)
+    ## storage.delete_movie('Up')
+    ## storage.update_movie('Up', 8.5)
+    _print_movies(storage)
