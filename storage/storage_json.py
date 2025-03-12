@@ -1,5 +1,5 @@
 #from typing import TextIO
-from istorage import IStorage
+from storage.istorage import IStorage
 import json
 import os
 

@@ -1,4 +1,4 @@
-from storage_json import StorageJson
+from storage.storage_json import StorageJson
 
 
 ##### The following commands will be moved later
