@@ -58,6 +58,9 @@ def _check_rating():
         break
     return movie_rating
 
+
+##### Testing from here
+
 def _print_movies(movies):
     # wip
     movies_dict = movies.list_movies()
