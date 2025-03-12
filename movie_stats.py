@@ -57,17 +57,6 @@ def _get_best_worst_ratings(rated_movies, highest):
     return extremes_rate_movies
 
 
-def _print_movie_data(movies):
-    """
-    A utility command to print movie data.
-    Receives a list of tuples (title, year, rating).
-    Prints a string with the info of each tuple.
-    """
-    for movie in movies:
-        title, year, rating = movie
-        print(f"{title} ({year}): {rating}")
-
-
 def _get_title_year_rating():
     """
     A utility command for extracting all the titles along
@@ -170,20 +159,6 @@ def search_movie(): # Menu command 7
     if not match_found:
         print("Movie matching search term not found")
 
-
-def list_movies(): # menu command 1
-    """
-    1. Prints a string indicating how many movies are stored
-    in the database (how many dicts are in the dict).
-    2. Parses the info from MOVIE_DATA,
-    serializes it into a string, and prints it.
-    """
-
-    print(f"{len(MOVIE_DATA)} movie(s) in total")
-
-    movies = _get_title_year_rating()
-
-    _print_movie_data(movies)
 
 
 def sort_by_rating(): # menu command 8

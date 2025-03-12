@@ -1,6 +1,6 @@
 import sys
-import movie_storage
-import movie_stats
+import main
+import storage_json
 
 
 def command_dispatcher(user_input):
@@ -13,16 +13,16 @@ def command_dispatcher(user_input):
 
     commands = {
         0: exit_my_movies,  # movie_phase1
-        1: movie_stats.list_movies,  # movie_phase1
-        2: movie_storage.add_movie,  # movie_phase1
-        3: movie_storage.delete_movie,  # movie_phase1
-        4: movie_storage.update_movie,  # movie_phase1
-        5: movie_stats.show_stats,  # movie_phase1
-        6: movie_stats.random_movie,  # movie_phase1
-        7: movie_stats.search_movie,  # movie_phase1
-        8: movie_stats.sort_by_rating,  # movie_phase1
-        9: movie_stats.sort_by_year, # movie_phase1_bonus_1
-        10: movie_stats.filter_movies, # movie_phase1_bonus_2
+        1: storage_json.list_movies,  # movie_phase2
+        2: storage_json.add_movie,  # movie_phase2
+        3: storage_json.delete_movie,  # movie_phase2
+        4: storage_json.update_movie,  # movie_phase2
+    #    5: movie_stats.show_stats,  # movie_phase1
+    #    6: movie_stats.random_movie,  # movie_phase1
+    #    7: movie_stats.search_movie,  # movie_phase1
+    #    8: movie_stats.sort_by_rating,  # movie_phase1
+    #    9: movie_stats.sort_by_year, # movie_phase1_bonus_1
+    #    10: movie_stats.filter_movies, # movie_phase1_bonus_2
                 }
 
     try:
@@ -93,6 +93,3 @@ def main():
         command_dispatcher(user_input)
         input("\nPress enter to continue ")
 
-
-if __name__ == "__main__":
-    main()
