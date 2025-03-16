@@ -31,7 +31,7 @@ class StorageJson(IStorage):
         """
         movie_dict_example = {
             "Titanic": {
-                "rating": 9,
+                "rating": 9.0,
                 "year": 1999
             }
         }
@@ -76,12 +76,12 @@ class StorageJson(IStorage):
         """
         Adds a movie to the movie database.
         """
+        movies = self.read_movies()
         title = self._check_title()
         year = self._check_year()
         rating = self._check_rating()
         # poster = ...
 
-        movies = self.read_movies()
         if title in movies:
             print(f"{title} already exists in database")
         else:
@@ -114,7 +114,7 @@ class StorageJson(IStorage):
         result.
         """
         movies = self.read_movies()
-        title = self.__check_title()
+        title = self._check_title()
 
         ## Check if there is something to delete
         if len(movies) == 0:
@@ -133,11 +133,13 @@ class StorageJson(IStorage):
             print(f"Movie {title} successfully deleted")
 
 
-    def update_movie(self, title, new_rating): # menu command 4
+    def update_movie(self): # menu command 4
         """
         Updates a movie rating from the movie database.
         """
         movies = self.read_movies()
+        title = self._check_title()
+        new_rating = self._check_rating()
 
         ## Check if there is something to update
         if len(movies) == 0:

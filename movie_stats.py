@@ -87,45 +87,7 @@ def _get_rating_title():
 
 
 
-def show_stats(): # Menu command 5
-    """
-    Calculates and print statistics about the movies in
-    the database: average rating, median rating, titles
-    with the highest and lowest rating.
 
-    Informs the user when there are no stats to show
-    Makes a list with all the ratings in the database
-    Prints the average and median averages in the database
-    Makes a list of tuples with movie ratings and titles
-    Sorts the list of tuples from lowest to highest rating
-    Prints the movie(s) with the highest rating
-    Prints the movie(s) with the lowest rating
-    """
-    if len(MOVIE_DATA) < 1:
-        print("Currently there are no movies in the database.")
-        return
-
-    ratings = []
-    for movie in MOVIE_DATA.values():
-        ratings.append(movie['rating'])
-
-    # movie_phase1 bonus3, round floats
-    average_rating = round(statistics.mean(sorted(ratings)), 2)
-    print(f"\nAverage rating: {average_rating}")
-    median_rating = round(statistics.median(sorted(ratings)), 2)
-    print(f"Median rating: {median_rating}")
-
-    rating_movies = _get_rating_title()
-    sorted_ratings_title = sorted(rating_movies,
-                                  key=lambda rating: rating[0])
-
-    best_movies = _get_best_worst_ratings(sorted_ratings_title,
-                                         highest=True)
-    _print_best_worst_movies(best_movies, "Best")
-
-    worst_movies = _get_best_worst_ratings(sorted_ratings_title,
-                                          highest=False)
-    _print_best_worst_movies(worst_movies, "Worst")
 
 
 def random_movie(): # Menu command 6

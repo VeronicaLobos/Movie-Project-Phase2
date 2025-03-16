@@ -1,10 +1,14 @@
 {
     "Titanic": {
-        "rating": 9,
+        "rating": 9.0,
         "year": 1999
     },
     "Up": {
-        "rating": 3.0,
-        "year": 1999
+        "rating": 8.3,
+        "year": 2009
+    },
+    "The Godfather": {
+        "rating": 9.0,
+        "year": 1972
     }
 }

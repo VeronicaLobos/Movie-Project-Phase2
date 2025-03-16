@@ -1,4 +1,7 @@
 import sys
+import statistics
+import random
+
 
 class MovieApp:
     def __init__(self, storage):
@@ -26,8 +29,50 @@ class MovieApp:
 
 
     def _command_movie_stats(self):
+        """
+        Calculates and print statistics about the movies in
+        the database: average rating, median rating, titles
+        with the highest and lowest rating.
 
-        pass
+        Informs the user when there are no stats to show
+        Makes a list with all the ratings in the database
+        Prints the average and median averages in the database
+        Makes a list of tuples with movie ratings and titles
+        Sorts the list of tuples from lowest to highest rating
+        Prints the movie(s) with the highest rating
+        Prints the movie(s) with the lowest rating
+        """
+        movies_dict = self._storage.read_movies()
+        if len(movies_dict) < 1:
+            print("Currently there are no movies in the database.")
+            return
+
+        ratings = [movie['rating'] for movie in movies_dict.values()]
+        average_rating = round(statistics.mean(sorted(ratings)), 2)
+        print(f"\nAverage rating: {average_rating}")
+        median_rating = round(statistics.median(sorted(ratings)), 2)
+        print(f"Median rating: {median_rating}")
+
+        rated_movies = [(movie_attributes['rating'], movie_title)
+            for movie_title, movie_attributes in movies_dict.items()]
+        sorted_ratings_title = sorted(rated_movies,
+                                      key=lambda rating: rating[0])
+
+        best_rating = max(sorted_ratings_title, key=lambda x: x[0])[0]
+        best_movies = [movie for movie in rated_movies if movie[0] == best_rating]
+        worst_rating = min(sorted_ratings_title, key=lambda x: x[0])[0]
+        worst_movies = [movie for movie in rated_movies if movie[0] == worst_rating]
+
+        best_worst = [("Best", best_movies), ("Worst", worst_movies)]
+        for extremes, movies in best_worst:
+            if len(movies) == 1:
+                print(f"{extremes} movie: {movies[0][1]}, {movies[0][0]}")
+            else:
+                output_string = f"{extremes} movies: "
+                for rating, title in movies:
+                    output_string += f"{title}, {rating}, "
+                print(output_string[:-2])
+
 
 
     def _generate_website(self):
@@ -48,9 +93,9 @@ class MovieApp:
             0: self._exit_my_movies,  #tested
             1: self._command_list_movies,  #tested
             2: self._storage.add_movie,  #tested
-            3: self._storage.delete_movie,  #
-            4: self._storage.update_movie,  # movie_phase2
-            #    5: movie_stats.show_stats,  # movie_phase1
+            3: self._storage.delete_movie,  #tested
+            4: self._storage.update_movie,  #tested
+            5: self._command_movie_stats,  # movie_phase1
             #    6: movie_stats.random_movie,  # movie_phase1
             #    7: movie_stats.search_movie,  # movie_phase1
             #    8: movie_stats.sort_by_rating,  # movie_phase1
