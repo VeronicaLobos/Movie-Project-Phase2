@@ -17,7 +17,7 @@ class MovieApp:
             3 movie(s) in total
             Titanic (1999): 9
         """
-        movies_dict = self._storage.list_movies() #from a module that loads a json file
+        movies_dict = self._storage.read_movies()
 
         print(f"{len(movies_dict)} movie(s) in total")
 
@@ -26,6 +26,7 @@ class MovieApp:
 
 
     def _command_movie_stats(self):
+
         pass
 
 
@@ -46,9 +47,9 @@ class MovieApp:
         commands = {
             0: self._exit_my_movies,  #tested
             1: self._command_list_movies,  #tested
-            #    2: add_movie,  # movie_phase2
-            #    3: delete_movie,  # movie_phase2
-            #    4: update_movie,  # movie_phase2
+            2: self._storage.add_movie,  #tested
+            3: self._storage.delete_movie,  #
+            4: self._storage.update_movie,  # movie_phase2
             #    5: movie_stats.show_stats,  # movie_phase1
             #    6: movie_stats.random_movie,  # movie_phase1
             #    7: movie_stats.search_movie,  # movie_phase1

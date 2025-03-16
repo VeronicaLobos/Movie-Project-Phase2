@@ -1,4 +1,4 @@
-#from typing import TextIO
+from typing import TextIO
 from storage.istorage import IStorage
 import json
 import os
@@ -11,10 +11,11 @@ SCRUM operations on it.
 
 class StorageJson(IStorage):
     def __init__(self, file_path):
+        super().__init__()
         self.file_path = file_path
 
 
-    def list_movies(self):
+    def read_movies(self):
         """
         Loads a json file containing data about movies.
 
@@ -59,11 +60,28 @@ class StorageJson(IStorage):
             json.dump(updated_movie_dict, handle, indent=4)
 
 
-    def add_movie(self, title, year, rating, poster): # menu command 2
+    def _check_title(self):
+        return super()._check_title()
+
+
+    def _check_year(self):
+        return super()._check_year()
+
+
+    def _check_rating(self):
+        return super()._check_rating()
+
+
+    def add_movie(self): # menu command 2
         """
         Adds a movie to the movie database.
         """
-        movies = self.list_movies()
+        title = self._check_title()
+        year = self._check_year()
+        rating = self._check_rating()
+        # poster = ...
+
+        movies = self.read_movies()
         if title in movies:
             print(f"{title} already exists in database")
         else:
@@ -74,13 +92,13 @@ class StorageJson(IStorage):
         self._update_json(movies)
 
         ## inform the user with the result
-        if title in self.list_movies():
+        if title in self.read_movies():
             print(f"{title} successfully added")
         else:
             print("Something went wrong, movie not added")
 
 
-    def delete_movie(self, title): # menu command 3
+    def delete_movie(self): # menu command 3
         """
         Deletes a movie from the movie database.
 
@@ -95,7 +113,8 @@ class StorageJson(IStorage):
         Prints a message to inform the user of the operation
         result.
         """
-        movies = self.list_movies()
+        movies = self.read_movies()
+        title = self.__check_title()
 
         ## Check if there is something to delete
         if len(movies) == 0:
@@ -110,7 +129,7 @@ class StorageJson(IStorage):
         self._update_json(movies)
 
         ## inform the user with the result
-        if title not in self.list_movies():
+        if title not in self.read_movies():
             print(f"Movie {title} successfully deleted")
 
 
@@ -118,7 +137,7 @@ class StorageJson(IStorage):
         """
         Updates a movie rating from the movie database.
         """
-        movies = self.list_movies()
+        movies = self.read_movies()
 
         ## Check if there is something to update
         if len(movies) == 0:
@@ -134,5 +153,5 @@ class StorageJson(IStorage):
         self._update_json(movies)
 
         ## inform the user with the result
-        if self.list_movies()[title]["rating"] == new_rating:
+        if self.read_movies()[title]["rating"] == new_rating:
             print(f"Movie {title} successfully updated")
