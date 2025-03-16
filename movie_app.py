@@ -9,9 +9,20 @@ class MovieApp:
         self._storage = storage
 
 
-    def _command_list_movies(self):
-        movies = self._storage.list_movies()
-        return movies
+    def _command_list_movies(self): # menu command 1
+        """
+        Fetches the data from the database as a dictionary
+        Prints the number of movies listed in it
+        Prints the info stored as formated strings, example:
+            3 movie(s) in total
+            Titanic (1999): 9
+        """
+        movies_dict = self._storage.list_movies() #from a module that loads a json file
+
+        print(f"{len(movies_dict)} movie(s) in total")
+
+        for title, attributes in movies_dict.items():
+            print(f"{title} ({attributes['year']}): {attributes['rating']}")
 
 
     def _command_movie_stats(self):
@@ -33,8 +44,8 @@ class MovieApp:
         print("")
 
         commands = {
-            0: self.__exit_my_movies,  #tested
-            1: self._command_list_movies,  # movie_phase2
+            0: self._exit_my_movies,  #tested
+            1: self._command_list_movies,  #tested
             #    2: add_movie,  # movie_phase2
             #    3: delete_movie,  # movie_phase2
             #    4: update_movie,  # movie_phase2
@@ -52,7 +63,7 @@ class MovieApp:
             print(f"Choice currently not available")
 
 
-    def __exit_my_movies(self):
+    def _exit_my_movies(self): # menu command 0
         """
         Prints a message and exits the CLI.
         """

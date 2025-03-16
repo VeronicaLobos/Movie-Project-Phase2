@@ -3,13 +3,18 @@ from storage.istorage import IStorage
 import json
 import os
 
+"""
+This module loads/creates a Json file and performs
+SCRUM operations on it.
+"""
+
 
 class StorageJson(IStorage):
     def __init__(self, file_path):
         self.file_path = file_path
 
 
-    def list_movies(self): # menu command 1
+    def list_movies(self):
         """
         Loads a json file containing data about movies.
 

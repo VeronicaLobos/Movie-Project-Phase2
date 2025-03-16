@@ -78,9 +78,9 @@ if __name__ == "__main__":
     Creates an instance of the movie app with it
     """
     storage = StorageJson('data/movies.json')
-    app = MovieApp(storage)
+    movies_app = MovieApp(storage)
     ## storage.add_movie('Up', 2009, 8.3, None)
     ## storage.delete_movie('Up')
     ## storage.update_movie('Up', 8.5)
     ## _print_movies(storage)
-    app.run()
+    movies_app.run()
