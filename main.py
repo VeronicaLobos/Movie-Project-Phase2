@@ -1,4 +1,6 @@
+from movie_app import MovieApp
 from storage.storage_json import StorageJson
+import movie_app
 
 
 ##### The following commands will be moved later
@@ -71,8 +73,14 @@ def _print_movies(movies):
 
 
 if __name__ == "__main__":
+    """
+    Imports and parses a Json file into a dictionary
+    Creates an instance of the movie app with it
+    """
     storage = StorageJson('data/movies.json')
+    app = MovieApp(storage)
     ## storage.add_movie('Up', 2009, 8.3, None)
     ## storage.delete_movie('Up')
     ## storage.update_movie('Up', 8.5)
-    _print_movies(storage)
+    ## _print_movies(storage)
+    app.run()
