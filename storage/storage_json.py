@@ -62,15 +62,15 @@ class StorageJson(IStorage):
 
 
     def check_title(self):
-        return super()._check_title()
+        return super().check_title()
 
 
     def check_year(self):
-        return super()._check_year()
+        return super().check_year()
 
 
     def check_rating(self):
-        return super()._check_rating()
+        return super().check_rating()
 
 
     def add_movie(self): # menu command 2

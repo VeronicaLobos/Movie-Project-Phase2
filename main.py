@@ -1,6 +1,6 @@
 from movie_app import MovieApp
 from storage.storage_csv import StorageCsv
-#from storage.storage_json import StorageJson
+from storage.storage_json import StorageJson
 
 
 ##### Testing from here

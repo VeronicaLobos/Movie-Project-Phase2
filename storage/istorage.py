@@ -12,6 +12,7 @@ class IStorage(ABC):
         """Loads a file containing data about movies"""
         pass
 
+
     def check_title(self):
         """
         A utility command for checking correct input
@@ -70,19 +71,19 @@ class IStorage(ABC):
         return movie_rating
 
 
-    @abstractmethod
+    #@abstractmethod
     def add_movie(self):
         """Adds a movie to a movie database
         Asks input for title, year, rating, poster"""
         pass
 
-    @abstractmethod
+    #@abstractmethod
     def delete_movie(self):
         """Deletes a movie from a movie database
         Asks input for title"""
         pass
 
-    @abstractmethod
+    #@abstractmethod
     def update_movie(self):
         """Updates a movie rating from a movie database
         Asks input for title, rating"""
