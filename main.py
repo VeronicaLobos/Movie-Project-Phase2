@@ -1,6 +1,6 @@
 from movie_app import MovieApp
-from storage.storage_json import StorageJson
-import movie_app
+from storage.storage_csv import StorageCsv
+#from storage.storage_json import StorageJson
 
 
 ##### Testing from here
@@ -19,10 +19,7 @@ if __name__ == "__main__":
     Imports and parses a Json file into a dictionary
     Creates an instance of the movie app with it
     """
-    storage = StorageJson('data/movies.json')
+    #storage = StorageJson('data/movies.json')
+    storage = StorageCsv('data/movies.csv')
     movies_app = MovieApp(storage)
-    ## storage.add_movie('Up', 2009, 8.3, None)
-    ## storage.delete_movie('Up')
-    ## storage.update_movie('Up', 8.5)
-    ## _print_movies(storage)
     movies_app.run()

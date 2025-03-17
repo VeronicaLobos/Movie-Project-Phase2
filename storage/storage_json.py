@@ -1,13 +1,11 @@
-from typing import TextIO
 from storage.istorage import IStorage
 import json
 import os
 
 """
 This module loads/creates a Json file and performs
-SCRUM operations on it.
+CRUD operations on it (persistent storage).
 """
-
 
 class StorageJson(IStorage):
     def __init__(self, file_path):
@@ -54,21 +52,24 @@ class StorageJson(IStorage):
             return {}
 
 
-    def _update_json(self, updated_movie_dict):
+    def _update_csv(self, updated_movie_dict):
+        """
+        Updates the database after performing RUD operation
+        """
         with open(file=self.file_path, mode='w',
                   encoding="utf-8") as handle:
             json.dump(updated_movie_dict, handle, indent=4)
 
 
-    def _check_title(self):
+    def check_title(self):
         return super()._check_title()
 
 
-    def _check_year(self):
+    def check_year(self):
         return super()._check_year()
 
 
-    def _check_rating(self):
+    def check_rating(self):
         return super()._check_rating()
 
 

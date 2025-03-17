@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
 
+"""
+This module contains an abstract class IStorage
+which performs CRUD operations on persistent storage.
+"""
+
 
 class IStorage(ABC):
     @abstractmethod
@@ -7,27 +12,7 @@ class IStorage(ABC):
         """Loads a file containing data about movies"""
         pass
 
-    @abstractmethod
-    def add_movie(self):
-        """Adds a movie to a movie database
-        Asks input for title, year, rating, poster"""
-        pass
-
-    @abstractmethod
-    def delete_movie(self):
-        """Deletes a movie from a movie database
-        Asks input for title"""
-        pass
-
-    @abstractmethod
-    def update_movie(self):
-        """Updates a movie rating from a movie database
-        Asks input for title, rating"""
-        pass
-
-    #### Methods to check input
-
-    def _check_title(self):
+    def check_title(self):
         """
         A utility command for checking correct input
         for a movie's title. Keeps prompting for input.
@@ -42,7 +27,7 @@ class IStorage(ABC):
         return movie_title
 
 
-    def _check_year(self):
+    def check_year(self):
         """
         A utility command for checking correct input
         for a movie's release year. Keeps prompting for input.
@@ -62,7 +47,7 @@ class IStorage(ABC):
         return movie_year
 
 
-    def _check_rating(self):
+    def check_rating(self):
         """
         A utility command for checking correct input
         for a movie's rating. Keeps prompting for input.
@@ -83,3 +68,22 @@ class IStorage(ABC):
                 continue
             break
         return movie_rating
+
+
+    @abstractmethod
+    def add_movie(self):
+        """Adds a movie to a movie database
+        Asks input for title, year, rating, poster"""
+        pass
+
+    @abstractmethod
+    def delete_movie(self):
+        """Deletes a movie from a movie database
+        Asks input for title"""
+        pass
+
+    @abstractmethod
+    def update_movie(self):
+        """Updates a movie rating from a movie database
+        Asks input for title, rating"""
+        pass

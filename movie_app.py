@@ -124,7 +124,7 @@ class MovieApp:
               f"it's rated {random_movie[0]}")
 
 
-    def _command_search_movie(self):
+    def _command_search_movie(self): # menu command 7
         """
         Asks the user to enter a part of a movie name,
         and then searches all the movies in the database.
@@ -148,7 +148,7 @@ class MovieApp:
             print("Movie matching search term not found")
 
 
-    def _command_sort_by_rating(self):
+    def _command_sort_by_rating(self): # menu command 8
         """
         Fetches and sorts movies sorted by descending rating.
         Prints all the movies and their ratings, in descending
@@ -164,7 +164,7 @@ class MovieApp:
             print(f"{title}: {rating}")
 
 
-    def _generate_website(self):
+    def _generate_website(self): # menu command 9
         pass
 
 
@@ -188,7 +188,7 @@ class MovieApp:
             6: self._command_random_movie,  #tested
             7: self._command_search_movie,  #tested
             8: self._command_sort_by_rating,  #tested
-            9: self._generate_website, #
+            9: self._generate_website, #wip
         }
 
         try:
