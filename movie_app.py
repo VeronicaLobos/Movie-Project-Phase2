@@ -28,51 +28,140 @@ class MovieApp:
             print(f"{title} ({attributes['year']}): {attributes['rating']}")
 
 
-    def _command_movie_stats(self):
+    def __get_rated_movies(self):
+        """
+        A utility command for extracting all the titles and ratings
+        from the movie database.
+        Returns a list with tuples (rating, title).
+        """
+        movies_dict = self._storage.read_movies()
+
+        rated_movies = [(movie_attributes['rating'], movie_title)
+                        for movie_title, movie_attributes in movies_dict.items()]
+
+        return rated_movies
+
+
+    def _command_movie_stats(self): # menu command 5
         """
         Calculates and print statistics about the movies in
         the database: average rating, median rating, titles
         with the highest and lowest rating.
 
-        Informs the user when there are no stats to show
-        Makes a list with all the ratings in the database
-        Prints the average and median averages in the database
-        Makes a list of tuples with movie ratings and titles
+        - Fetches the data from the database as a dictionary
+
+        - Calculates and prints average and median ratings
+        1. Informs the user when there are no stats to show
+        2. Makes a list with all the ratings in the database
+        3. Prints the average and median averages in the database
+
+        - Calculates highest and lowest ratings,
+        prints movie(s) with highest and lower rating
+        4. Calls __get_rated_movies() to get a list of
+        tuples containing movie titles and their ratings
         Sorts the list of tuples from lowest to highest rating
-        Prints the movie(s) with the highest rating
-        Prints the movie(s) with the lowest rating
+        5. Finds the highest and lowest rating from the sorted
+        list
+        Makes a list with movie(s) matching the highest rating,
+        and a list with movie(s) matching the lowest rating
+        6. Prints the movie(s) in those lists formated as strings
+        (all the movies that share that rating if there is more
+        than one)
         """
         movies_dict = self._storage.read_movies()
+
+        ## Step 1
         if len(movies_dict) < 1:
             print("Currently there are no movies in the database.")
             return
 
+        ## Step 2
         ratings = [movie['rating'] for movie in movies_dict.values()]
+
+        ## Step 3
         average_rating = round(statistics.mean(sorted(ratings)), 2)
         print(f"\nAverage rating: {average_rating}")
         median_rating = round(statistics.median(sorted(ratings)), 2)
         print(f"Median rating: {median_rating}")
 
-        rated_movies = [(movie_attributes['rating'], movie_title)
-            for movie_title, movie_attributes in movies_dict.items()]
-        sorted_ratings_title = sorted(rated_movies,
+        ## Step 4
+        rated_movies = self.__get_rated_movies()
+        sorted_rated_movies = sorted(rated_movies,
                                       key=lambda rating: rating[0])
 
-        best_rating = max(sorted_ratings_title, key=lambda x: x[0])[0]
+        ## Step 5
+        best_rating = max(sorted_rated_movies, key=lambda x: x[0])[0]
         best_movies = [movie for movie in rated_movies if movie[0] == best_rating]
-        worst_rating = min(sorted_ratings_title, key=lambda x: x[0])[0]
+        worst_rating = min(sorted_rated_movies, key=lambda x: x[0])[0]
         worst_movies = [movie for movie in rated_movies if movie[0] == worst_rating]
 
+        ## Step 6
         best_worst = [("Best", best_movies), ("Worst", worst_movies)]
         for extremes, movies in best_worst:
             if len(movies) == 1:
                 print(f"{extremes} movie: {movies[0][1]}, {movies[0][0]}")
-            else:
+            else: ##  When more than one movie has that rating
                 output_string = f"{extremes} movies: "
                 for rating, title in movies:
                     output_string += f"{title}, {rating}, "
                 print(output_string[:-2])
 
+
+    def _command_random_movie(self): # menu command 6
+        """
+        Prints the title and rating of a random movie
+        from the database.
+
+        - Calls __get_rated_movies() to get a list of
+        tuples containing movie titles and their ratings
+        - Randomly chooses a tuple from the list
+        - Prints the tuple formated as a string
+        """
+        rated_movies = self.__get_rated_movies()
+        random_movie = random.choice(rated_movies)
+
+        print(f"Your movie for tonight:. {random_movie[1]}, "
+              f"it's rated {random_movie[0]}")
+
+
+    def _command_search_movie(self):
+        """
+        Asks the user to enter a part of a movie name,
+        and then searches all the movies in the database.
+        Prints all the movies that matched the user’s query,
+        along with the rating. If there is no match it will
+        print a message informing the user.
+        """
+        rated_movies = self.__get_rated_movies()
+        search_term = input("Enter part of movie name: ").lower()
+        match_found = False
+
+        matches = [(rating, title) for (rating, title) in rated_movies if
+                 search_term in title.lower()]
+
+        if matches:
+            for rating, title in matches:
+                print(f"{title}, {rating}")
+                match_found = True
+
+        if not match_found:
+            print("Movie matching search term not found")
+
+
+    def _command_sort_by_rating(self):
+        """
+        Fetches and sorts movies sorted by descending rating.
+        Prints all the movies and their ratings, in descending
+        order by the rating.
+        """
+        rated_movies = self.__get_rated_movies()
+
+        movies_sorted_desc_rating = sorted(rated_movies,
+                                           key=lambda movies: movies[0],
+                                           reverse=True)
+
+        for rating, title in movies_sorted_desc_rating:
+            print(f"{title}: {rating}")
 
 
     def _generate_website(self):
@@ -95,12 +184,11 @@ class MovieApp:
             2: self._storage.add_movie,  #tested
             3: self._storage.delete_movie,  #tested
             4: self._storage.update_movie,  #tested
-            5: self._command_movie_stats,  # movie_phase1
-            #    6: movie_stats.random_movie,  # movie_phase1
-            #    7: movie_stats.search_movie,  # movie_phase1
-            #    8: movie_stats.sort_by_rating,  # movie_phase1
-            #    9: movie_stats.sort_by_year, # movie_phase1_bonus_1
-            #    10: movie_stats.filter_movies, # movie_phase1_bonus_2
+            5: self._command_movie_stats,  #tested
+            6: self._command_random_movie,  #tested
+            7: self._command_search_movie,  #tested
+            8: self._command_sort_by_rating,  #tested
+            9: self._generate_website, #
         }
 
         try:
@@ -126,7 +214,7 @@ class MovieApp:
         """
         while True:
             try:
-                user_input = int(input("Enter choice (0-10): "))
+                user_input = int(input("Enter choice (0-9): "))
                 return user_input
             except ValueError:
                 print("Please enter a valid number")
@@ -148,8 +236,7 @@ class MovieApp:
                 "6. Random movie\n"
                 "7. Search movie\n"
                 "8. Movies sorted by rating\n"
-                "9. Movies sorted by year\n"
-                "10. Filter movies\n")
+                "9. Generate website\n")
         print(menu)
 
 
