@@ -15,17 +15,30 @@ class MovieApp:
     def _command_list_movies(self): # menu command 1
         """
         Fetches the data from the database as a dictionary
+        Handles cases in which the csv file could be corrupt
+        or wrongly formated.
+
         Prints the number of movies listed in it
         Prints the info stored as formated strings, example:
             3 movie(s) in total
             Titanic (1999): 9
         """
-        movies_dict = self._storage.read_movies()
+        try:
+            movies_dict = self._storage.read_movies()
 
-        print(f"{len(movies_dict)} movie(s) in total")
+            print(f"{len(movies_dict)} movie(s) in total")
 
-        for title, attributes in movies_dict.items():
-            print(f"{title} ({attributes['year']}): {attributes['rating']}")
+            for title, attributes in movies_dict.items():
+                print(f"{title} ({attributes['year']}):"
+                      f" {attributes['rating']}")
+
+        except (TypeError, FileNotFoundError) as e:
+            """Deletes the contents of the CSV and populates 
+            it with the example data."""
+            print("Data base might be corrupt", e)
+            corrupt_movies_dict = self._storage.read_movies()
+            print(corrupt_movies_dict)
+            self._storage._reset_csv_file()
 
 
     def __get_rated_movies(self):

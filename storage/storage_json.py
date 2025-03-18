@@ -26,6 +26,14 @@ class StorageJson(IStorage):
         Returns a dictionary where keys = movie titles,
         values = dictionaries with movie attributes like
         rating and release year.
+
+        For example, the function may return:
+        {
+          "Titanic": {
+            "rating": 9,
+            "year": 1999
+            }
+        }
         """
         movie_dict_example = {
             "Titanic": {"rating": 9.0, "year": 1999},
@@ -38,10 +46,12 @@ class StorageJson(IStorage):
                 with open(file=self.file_path, mode='w',
                           encoding="utf-8") as handle:
                     json.dump(movie_dict_example, handle, indent=4)
+                    # print("Made a new json file!")
 
             with open(file=self.file_path, mode="r",
                       encoding="utf-8") as handle:
                 return json.load(handle)
+                #print("Found a json file!")
 
         except FileNotFoundError:
             print(f"{self.file_path} not found.")
@@ -53,8 +63,8 @@ class StorageJson(IStorage):
 
     def _update_json(self, updated_movie_dict):
         """
-        Updates the database after performing an operation
-        with the data previously extracted from the database
+        Utility command for write, delete, update methods.
+        Writes the provided movie dictionary to the json file.
         """
         with open(file=self.file_path, mode='w',
                   encoding="utf-8") as handle:
@@ -62,30 +72,56 @@ class StorageJson(IStorage):
 
 
     def check_title(self):
+        """
+        Utility command for checking str input in write,
+        delete, update commands.
+        """
         return super().check_title()
 
 
     def check_year(self):
+        """
+        Utility command for checking int input in write,
+        delete, update commands.
+        """
         return super().check_year()
 
 
     def check_rating(self):
+        """
+        Utility command for checking float input in write,
+        delete, update commands.
+        """
         return super().check_rating()
 
 
     def add_movie(self): # menu command 2
         """
         Adds a movie to the movie database.
+
+        Checks if there is data in the database, if so
+        Gets and checks title input.
+        Checks title exists in the database, if not
+        parses the data for the new movie into a dict
+        and appends it into the dictionary loaded from
+        the database. Updates the json file with it.
+
+        Prints a message to inform the user of the operation
+        result.
         """
         movies = self.read_movies()
-        title = self.check_title()
-        year = self.check_year()
-        rating = self.check_rating()
         # poster = ...
 
-        if title in movies:
+        if len(movies) == 0:
+            print("Currently there are no movies in the database")
+
+        title = self.check_title()
+        if title in movies.keys():
             print(f"{title} already exists in database")
+            return
         else:
+            year = self.check_year()
+            rating = self.check_rating()
             movies[title] = {
                 "rating": rating,
                 "year": year
@@ -115,46 +151,53 @@ class StorageJson(IStorage):
         result.
         """
         movies = self.read_movies()
-        title = self.check_title()
 
-        ## Check if there is something to delete
         if len(movies) == 0:
             print("Currently there are no movies in the database")
             return
 
-        ## Check if the title exists
+        title = self.check_title()
         if not title in movies:
             raise KeyError(f"Movie {title} doesn't exist!")
+        else:
+            del movies[title]
+            self._update_json(movies)
 
-        del movies[title]
-        self._update_json(movies)
-
-        ## inform the user with the result
         if title not in self.read_movies():
             print(f"Movie {title} successfully deleted")
+        else:
+            print("Something went wrong...")
 
 
     def update_movie(self): # menu command 4
         """
         Updates a movie rating from the movie database.
+
+        Checks if there is data to update, if so
+        Checks movie exists in the database, if so
+        parses the data for the new movie into a dict
+        and appends it into the dictionary loaded from
+        the database. Updates the json file with it.
+
+        Prints a message to inform the user with the operation
+        result.
         """
         movies = self.read_movies()
-        title = self.check_title()
-        new_rating = self.check_rating()
 
-        ## Check if there is something to update
         if len(movies) == 0:
             print("Currently there are no movies in the database")
             return
 
-        ## Check if the title exists
+        title = self.check_title()
         if not title in movies:
             print(f"Movie {title} doesn't exist!")
             return
+        else:
+            new_rating = self.check_rating()
+            movies[title]["rating"] = new_rating
+            self._update_json(movies)
 
-        movies[title]["rating"] = new_rating
-        self._update_json(movies)
-
-        ## inform the user with the result
         if self.read_movies()[title]["rating"] == new_rating:
             print(f"Movie {title} successfully updated")
+        else:
+            print("Something went wrong...")

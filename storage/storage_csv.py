@@ -21,7 +21,8 @@ class StorageCsv(IStorage):
         rating and year of the movie.
 
         Returns nested dictionaries where the first column
-        fills the outer key, and the following columns are
+        fills the outer key (title), and the following
+        columns are
         the keys for the movie attributes (rating, year).
         """
         movies_dictionary = {}
@@ -36,12 +37,30 @@ class StorageCsv(IStorage):
                 }
         return movies_dictionary
 
+    def _reset_csv_file(self):
+        """
+        A utility command for read_movies() method.
+
+        Deletes the contents of the CSV and populates
+        it with the example data.
+        Called as a result of corrupt files.
+        """
+        try:
+            self.file_path = "data/movies.csv"
+            return self.read_movies()
+        except FileNotFoundError:
+            return self.read_movies()
+
 
     def read_movies(self):
         """
-        Loads a csv file containing data about movies.
+        Loads/creates a csv file containing data about movies.
 
-        Returns a dictionary of dictionaries that
+        Handles cases in which there is no csv file from
+        an example *dictionary of dictionaries*, there
+        is an empty csv file or empty with a header.
+
+        Returns a *dictionary of nested dictionaries* that
         contains the movies information in the database.
 
         For example, the function may return:
@@ -69,23 +88,27 @@ class StorageCsv(IStorage):
                         writer.writerow([movie["title"],
                             movie["rating"], movie["year"]])
 
-                print("I made a new csv!")
+                #print("Made a new csv file!")
                 return self._parse_csv_to_dict()
 
             else:
-                print("Found a csv file!")
+                #print("Found a csv file!")
                 return self._parse_csv_to_dict()
 
         except FileNotFoundError:
             print(f"File not found: {self.file_path}")
             return {}
-        except ValueError:
+        except ValueError: #NoneType
             print(f"Error parsing data in {self.file_path}")
+            self._reset_csv_file()
+            print(f"Database has been reset")
+            return self._parse_csv_to_dict()
 
 
     def _update_csv(self, movies_dict):
         """
-        Writes the provided movie dictionary to the csv file
+        Utility command for write, delete, update methods.
+        Writes the provided movie dictionary to the csv file.
         """
         try:
             with open(self.file_path, mode='w',
@@ -100,34 +123,132 @@ class StorageCsv(IStorage):
 
 
     def check_title(self):
+        """
+        Utility command for checking str input in write,
+        delete, update commands.
+        """
         return super().check_title()
 
 
     def check_year(self):
+        """
+        Utility command for checking int input in write,
+        delete, update commands.
+        """
         return super().check_year()
 
 
     def check_rating(self):
+        """
+        Utility command for checking float input in write,
+        delete, update commands.
+        """
         return super().check_rating()
 
 
     def add_movie(self): # menu command 2
         """
         Adds a movie to the movie database.
-        """
 
-        pass
+        Checks if there is data in the database, if so
+        Gets and checks title input.
+        Checks title exists in the database, if not
+        parses the data for the new movie into a dict
+        and appends it into the dictionary loaded from
+        the database. Updates the csv file with it.
+
+        Prints a message to inform the user of the operation
+        result.
+        """
+        movies = self.read_movies()
+        # poster = ...
+
+        if len(movies) == 0:
+            print("Currently there are no movies in the database")
+
+        title = self.check_title()
+        if title in movies:
+            print(f"{title} already exists in database")
+            return
+        else:
+            year = self.check_year()
+            rating = self.check_rating()
+            movies[title] = {
+                "rating": rating,
+                "year": year
+            }
+        self._update_csv(movies)
+
+        ## inform the user with the result
+        if title in self.read_movies():
+            print(f"{title} successfully added")
+        else:
+            print("Something went wrong, movie not added")
 
 
     def delete_movie(self): # menu command 3
         """
         Deletes a movie from the movie database.
+
+        Checks if there is data to delete, if so
+        Checks movie exists in the database, if so
+        Deletes the movie from the preloaded
+        dict of dicts, and updates the csv file with it.
+        Raises a KeyError if the movie cannot be found
+        in the database and thus, the operation cannot be
+        performed (still same result).
+
+        Prints a message to inform the user of the operation
+        result.
         """
-        pass
+        movies = self.read_movies()
+
+        if len(movies) == 0:
+            print("Currently there are no movies in the database")
+            return
+
+        title = self.check_title()
+        if not title in movies:
+            raise KeyError(f"Movie {title} doesn't exist!")
+
+        del movies[title]
+        self._update_csv(movies)
+
+        if title not in self.read_movies():
+            print(f"Movie {title} successfully deleted")
+        else:
+            print("Something went wrong...")
 
 
     def update_movie(self): # menu command 4
         """
         Updates a movie rating from the movie database.
+
+        Checks if there is data to update, if so
+        Checks movie exists in the database, if so
+        modifies the value for 'rating' in the
+        corresponding movie.
+        Updates the csv file with the updated dict.
+
+        Prints a message to inform the user with the operation
+        result.
         """
-        pass
+        movies = self.read_movies()
+
+        if len(movies) == 0:
+            print("Currently there are no movies in the database")
+            return
+
+        title = self.check_title()
+        if not title in movies:
+            print(f"Movie {title} doesn't exist!")
+            return
+        else:
+            new_rating = self.check_rating()
+            movies[title]["rating"] = new_rating
+            self._update_csv(movies)
+
+        if self.read_movies()[title]["rating"] == new_rating:
+            print(f"Movie {title} successfully updated")
+        else:
+            print("Something went wrong...")
