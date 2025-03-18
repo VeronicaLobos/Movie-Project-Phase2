@@ -28,10 +28,9 @@ class StorageJson(IStorage):
         rating and release year.
         """
         movie_dict_example = {
-            "Titanic": {
-                "rating": 9.0,
-                "year": 1999
-            }
+            "Titanic": {"rating": 9.0, "year": 1999},
+            "Up": {"rating": 8.3, "year": 2009},
+            "The Godfather": {"rating": 9.0, "year": 1972}
         }
 
         try:
@@ -52,9 +51,10 @@ class StorageJson(IStorage):
             return {}
 
 
-    def _update_csv(self, updated_movie_dict):
+    def _update_json(self, updated_movie_dict):
         """
-        Updates the database after performing RUD operation
+        Updates the database after performing an operation
+        with the data previously extracted from the database
         """
         with open(file=self.file_path, mode='w',
                   encoding="utf-8") as handle:
@@ -78,9 +78,9 @@ class StorageJson(IStorage):
         Adds a movie to the movie database.
         """
         movies = self.read_movies()
-        title = self._check_title()
-        year = self._check_year()
-        rating = self._check_rating()
+        title = self.check_title()
+        year = self.check_year()
+        rating = self.check_rating()
         # poster = ...
 
         if title in movies:
@@ -115,7 +115,7 @@ class StorageJson(IStorage):
         result.
         """
         movies = self.read_movies()
-        title = self._check_title()
+        title = self.check_title()
 
         ## Check if there is something to delete
         if len(movies) == 0:
@@ -139,8 +139,8 @@ class StorageJson(IStorage):
         Updates a movie rating from the movie database.
         """
         movies = self.read_movies()
-        title = self._check_title()
-        new_rating = self._check_rating()
+        title = self.check_title()
+        new_rating = self.check_rating()
 
         ## Check if there is something to update
         if len(movies) == 0:

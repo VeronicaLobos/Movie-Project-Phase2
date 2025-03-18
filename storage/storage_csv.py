@@ -69,9 +69,11 @@ class StorageCsv(IStorage):
                         writer.writerow([movie["title"],
                             movie["rating"], movie["year"]])
 
+                print("I made a new csv!")
                 return self._parse_csv_to_dict()
 
             else:
+                print("Found a csv file!")
                 return self._parse_csv_to_dict()
 
         except FileNotFoundError:
@@ -81,13 +83,20 @@ class StorageCsv(IStorage):
             print(f"Error parsing data in {self.file_path}")
 
 
-    def _update_csv(self, updated_movie_dict):
+    def _update_csv(self, movies_dict):
         """
-        Updates the database after performing RUD operation
+        Writes the provided movie dictionary to the csv file
         """
-        with open(file=self.file_path, mode='w',
-                  encoding="utf-8") as handle:
-            pass
+        try:
+            with open(self.file_path, mode='w',
+                      encoding='utf-8', newline='') as handle:
+                writer = csv.writer(handle)
+                writer.writerow(["title", "rating", "year"])
+                for title, movie_data in movies_dict.items():
+                    writer.writerow([title, movie_data["rating"],
+                                     movie_data["year"]])
+        except Exception as e:
+            print(f"Database wasn't updated: {e}")
 
 
     def check_title(self):
@@ -106,6 +115,7 @@ class StorageCsv(IStorage):
         """
         Adds a movie to the movie database.
         """
+
         pass
 
 
