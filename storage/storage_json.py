@@ -95,9 +95,12 @@ class StorageJson(IStorage):
         Utility command for write, delete, update methods.
         Writes the provided movie dictionary to the json file.
         """
-        with open(file=self.file_path, mode='w',
+        try:
+            with open(file=self.file_path, mode='w',
                   encoding="utf-8") as handle:
-            json.dump(updated_movie_dict, handle, indent=4)
+                json.dump(updated_movie_dict, handle, indent=4)
+        except Exception as e:
+            print(f"Database wasn't updated: {e}")
 
 
     def check_title(self):
@@ -148,13 +151,11 @@ class StorageJson(IStorage):
             print(f"{title} already exists in database")
             return
         else:
-            #######------------------------------------------
-            json_data = data_fetcher.get_new_movie_data(title)
-            if json_data is None:
+            new_movie_data = data_fetcher.get_new_movie_data(title)
+            if new_movie_data is None:
                 print(f"Error fetching data for {title}")
             else:
-                print(json_data) ######
-            #######------------------------------------------
+                movies[title] = new_movie_data
                 self._update_json(movies)
 
         ## inform the user with the result

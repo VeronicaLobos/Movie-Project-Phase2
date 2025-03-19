@@ -1,6 +1,8 @@
 from storage.istorage import IStorage
+import data_fetcher
 import os
 import csv
+
 
 """
 This module loads/creates a Json file and performs
@@ -33,7 +35,8 @@ class StorageCsv(IStorage):
                 title = row["title"]
                 movies_dictionary[title] = {
                     "rating": float(row["rating"]),
-                    "year": int(row["year"])
+                    "year": int(row["year"]),
+                    "poster": str(row["poster"])
                 }
         return movies_dictionary
 
@@ -71,22 +74,10 @@ class StorageCsv(IStorage):
         }
         """
         movie_list_example = [
-            {"title": "Titanic", "rating": 9.0, "year": 1999,
-                        "poster": "https://m.media-amazon.com/"
-                            "images/M/MV5BYzYyN2FiZmUtYWYzMy00M"
-                            "zViLWJkZTMtOGY1ZjgzNWMwN2YxXkEyXkF"
-                            "qcGc@._V1_SX300.jpg"},
-            {"title": "Up", "rating": 8.3, "year": 2009,
-                   "poster": "https://m.media-amazon.com/images/"
-                             "M/MV5BNmI1ZTc5MWMtMDYyOS00ZDc2LTkz"
-                             "OTAtNjQ4NWIxNjYyNDgzXkEyXkFqcGc@._"
-                             "V1_SX300.jpg"},
-            {"title": "The Godfather", "rating": 9.0, "year": 1972,
-                              "poster": "https://m.media-amazon."
-                                "com/images/M/MV5BNGEwYjgwOGQtYj"
-                                "g5ZS00Njc1LTk2ZGEtM2QwZWQ2NjdhZ"
-                                "TE5XkEyXkFqcGc@._V1_SX300.jpg"}
-        ]
+            {"title": "Titanic", "rating": 9.0, "year": 1999, "poster": "https://m.media-amazon.com/images/M/MV5BYzYyN2FiZmUtYWYzMy00MzViLWJkZTMtOGY1ZjgzNWMwN2YxXkEyXkFqcGc@._V1_SX300.jpg"},
+            {"title": "Up", "rating": 8.3, "year": 2009, "poster": "https://m.media-amazon.com/images/M/MV5BNmI1ZTc5MWMtMDYyOS00ZDc2LTkzOTAtNjQ4NWIxNjYyNDgzXkEyXkFqcGc@._V1_SX300.jpg"},
+            {"title": "The Godfather", "rating": 9.0, "year": 1972, "poster": "https://m.media-amazon.com/images/M/MV5BNGEwYjgwOGQtYjg5ZS00Njc1LTk2ZGEtM2QwZWQ2NjdhZTE5XkEyXkFqcGc@._V1_SX300.jpg"}
+                            ]
 
         try:
             if not os.path.exists(self.file_path):
@@ -96,8 +87,7 @@ class StorageCsv(IStorage):
                     header = ["title", "rating", "year", "poster"]
                     writer.writerow(header)
                     for movie in movie_list_example:
-                        writer.writerow([movie["title"], movie["rating"],
-                                         movie["year"], movie["poster"]])
+                        writer.writerow([movie["title"], movie["rating"], movie["year"], movie["poster"]])
 
             return self._parse_csv_to_dict()
         except FileNotFoundError:
@@ -119,10 +109,9 @@ class StorageCsv(IStorage):
             with open(self.file_path, mode='w',
                       encoding='utf-8', newline='') as handle:
                 writer = csv.writer(handle)
-                writer.writerow(["title", "rating", "year"])
-                for title, movie_data in movies_dict.items():
-                    writer.writerow([title, movie_data["rating"],
-                                     movie_data["year"]])
+                writer.writerow(["title", "rating", "year", "poster"])
+                for movie_title, movie_data in movies_dict.items():
+                    writer.writerow([movie_title, movie_data.get("rating"), movie_data.get("year"), movie_data.get("poster")])
         except Exception as e:
             print(f"Database wasn't updated: {e}")
 
@@ -165,27 +154,24 @@ class StorageCsv(IStorage):
         Prints a message to inform the user of the operation
         result.
         """
+        self.read_movies()
         movies = self.read_movies()
-        # poster = ...
-
-        if len(movies) == 0:
-            print("Currently there are no movies in the database")
 
         title = self.check_title()
         if title in movies:
             print(f"{title} already exists in database")
             return
-        else:
-            year = self.check_year()
-            rating = self.check_rating()
-            movies[title] = {
-                "rating": rating,
-                "year": year
-            }
+
+        new_movie_data = data_fetcher.get_new_movie_data(title)
+        if new_movie_data is None:
+            print(f"Error fetching data for {title}")
+            return
+
+        movies[title] = new_movie_data
         self._update_csv(movies)
 
         ## inform the user with the result
-        if title in self.read_movies():
+        if title in self.read_movies().keys():
             print(f"{title} successfully added")
         else:
             print("Something went wrong, movie not added")

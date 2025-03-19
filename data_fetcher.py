@@ -97,23 +97,21 @@ def get_new_movie_data(movie_title):
     IMDb rating, year, and poster URL.
     If the title contains spaces, replaces them with
     "+".
-    Returns a dictionary containing the title as key
-    and the extracted info as a dict of attributes.
+    Returns a dictionary containing the extracted
+    info as a dict of attributes.
     Returns an empty dictionary if any error occurs
     or if movie data is not found.
     """
-    movie_info = _get_movie_info(movie_title)
+    title = movie_title.replace(" ", "+")
+    movie_info = _get_movie_info(title)
     try:
-        title = movie_title.replace(" ", "+")
         rating = _get_movie_rating(movie_info)
-        year = movie_info.get("Year")
+        year = int(movie_info.get("Year"))
         poster_url = movie_info.get("Poster")
 
-        new_movie_dict = {
-            title: {'year': year,
-                    'rating': rating,
+        new_movie_dict = {'rating': rating,
+                          'year': year,
                     'poster': poster_url}
-                      }
     except Exception as e:
         print("Error during movie data processing: ", e)
         return 0
