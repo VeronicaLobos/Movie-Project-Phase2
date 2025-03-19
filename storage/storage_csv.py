@@ -37,7 +37,8 @@ class StorageCsv(IStorage):
                 }
         return movies_dictionary
 
-    def _reset_csv_file(self):
+
+    def _reset_database(self):
         """
         A utility command for read_movies() method.
 
@@ -45,11 +46,7 @@ class StorageCsv(IStorage):
         it with the example data.
         Called as a result of corrupt files.
         """
-        try:
-            self.file_path = "data/movies.csv"
-            return self.read_movies()
-        except FileNotFoundError:
-            return self.read_movies()
+        super()._reset_database()
 
 
     def read_movies(self):

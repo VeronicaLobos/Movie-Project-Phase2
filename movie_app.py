@@ -27,18 +27,15 @@ class MovieApp:
             movies_dict = self._storage.read_movies()
 
             print(f"{len(movies_dict)} movie(s) in total")
+            if len(movies_dict) < 1:
+                print("Please, add movies to the database")
 
             for title, attributes in movies_dict.items():
                 print(f"{title} ({attributes['year']}):"
                       f" {attributes['rating']}")
 
         except (TypeError, FileNotFoundError) as e:
-            """Deletes the contents of the CSV and populates 
-            it with the example data."""
-            print("Data base might be corrupt", e)
-            corrupt_movies_dict = self._storage.read_movies()
-            print(corrupt_movies_dict)
-            self._storage._reset_csv_file()
+            print("Data base might be currently empty or corrupted")
 
 
     def __get_rated_movies(self):
@@ -130,6 +127,10 @@ class MovieApp:
         - Randomly chooses a tuple from the list
         - Prints the tuple formated as a string
         """
+        if len(self._storage.read_movies()) < 1:
+            print("Currently there are no movies in the database.")
+            return
+
         rated_movies = self.__get_rated_movies()
         random_movie = random.choice(rated_movies)
 
@@ -167,6 +168,10 @@ class MovieApp:
         Prints all the movies and their ratings, in descending
         order by the rating.
         """
+        if len(self._storage.read_movies()) < 1:
+            print("Currently there are no movies in the database.")
+            return
+
         rated_movies = self.__get_rated_movies()
 
         movies_sorted_desc_rating = sorted(rated_movies,

@@ -1,6 +1,8 @@
 from storage.istorage import IStorage
 import json
 import os
+import data_fetcher
+
 
 """
 This module loads/creates a Json file and performs
@@ -11,6 +13,17 @@ class StorageJson(IStorage):
     def __init__(self, file_path):
         super().__init__()
         self.file_path = file_path
+
+
+    def _reset_database(self):
+        """
+        A utility command for read_movies() method.
+
+        Deletes the contents of the CSV and populates
+        it with the example data.
+        Called as a result of corrupt files.
+        """
+        super()._reset_database()
 
 
     def read_movies(self):
@@ -46,19 +59,21 @@ class StorageJson(IStorage):
                 with open(file=self.file_path, mode='w',
                           encoding="utf-8") as handle:
                     json.dump(movie_dict_example, handle, indent=4)
-                    # print("Made a new json file!")
 
             with open(file=self.file_path, mode="r",
                       encoding="utf-8") as handle:
                 return json.load(handle)
-                #print("Found a json file!")
-
         except FileNotFoundError:
             print(f"{self.file_path} not found.")
             return {}
         except json.JSONDecodeError:
             print(f"{self.file_path} is corrupted")
-            return {}
+            reset = input("Do you want to reset the CSV database? Y/N: ")
+            if reset == "Y":
+                self._reset_database()
+            else:
+                print("No action taken")
+                return {}
 
 
     def _update_json(self, updated_movie_dict):
@@ -110,7 +125,6 @@ class StorageJson(IStorage):
         result.
         """
         movies = self.read_movies()
-        # poster = ...
 
         if len(movies) == 0:
             print("Currently there are no movies in the database")
@@ -120,13 +134,15 @@ class StorageJson(IStorage):
             print(f"{title} already exists in database")
             return
         else:
-            year = self.check_year()
-            rating = self.check_rating()
-            movies[title] = {
-                "rating": rating,
-                "year": year
-            }
-        self._update_json(movies)
+            #######------------------------------------------
+            json_data = data_fetcher.get_new_movie_data(title)
+            if json_data is None:
+                print(f"Error fetching data for {title}")
+            else:
+                #movies[title] = json_data
+                print("hi")
+            #######------------------------------------------
+                self._update_json(movies)
 
         ## inform the user with the result
         if title in self.read_movies():

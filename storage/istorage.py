@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+import json
+import csv
 
 """
 This module contains an abstract class IStorage
@@ -11,6 +13,32 @@ class IStorage(ABC):
     def read_movies(self):
         """Loads a file containing data about movies"""
         pass
+
+
+    def _reset_database(self):
+        """
+        A utility command for read_movies() method.
+
+        Deletes the contents of the CSV and populates
+        it with the example data.
+        Called as a result of corrupt files.
+        """
+        try:
+            #self.file_path = "data/movies.csv"
+            print(f"Reseting {self.file_path}...")
+            if ".json" in self.file_path:
+                with open(file=self.file_path, mode='w',
+                      encoding="utf-8") as handle:
+                    json.dump({}, handle, indent=4)
+            elif ".csv" in self.file_path:
+                with open(file=self.file_path, mode='w',
+                    encoding='utf-8', newline='') as handle:
+                    writer = csv.writer(handle)
+                    header = ["title", "rating", "year"]
+                    writer.writerow(header)
+        except FileNotFoundError:
+            print("or here")
+            return self.read_movies()
 
 
     def check_title(self):
