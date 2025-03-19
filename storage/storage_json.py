@@ -45,13 +45,27 @@ class StorageJson(IStorage):
           "Titanic": {
             "rating": 9,
             "year": 1999
+            "poster": "https://m.media-amazon.com/
+                       images/...X300.jpg"
             }
         }
         """
         movie_dict_example = {
-            "Titanic": {"rating": 9.0, "year": 1999},
-            "Up": {"rating": 8.3, "year": 2009},
-            "The Godfather": {"rating": 9.0, "year": 1972}
+            "Titanic": {"rating": 9.0, "year": 1999,
+                        "poster": "https://m.media-amazon.com/"
+                            "images/M/MV5BYzYyN2FiZmUtYWYzMy00M"
+                            "zViLWJkZTMtOGY1ZjgzNWMwN2YxXkEyXkF"
+                            "qcGc@._V1_SX300.jpg"},
+            "Up": {"rating": 8.3, "year": 2009,
+                   "poster": "https://m.media-amazon.com/images/"
+                             "M/MV5BNmI1ZTc5MWMtMDYyOS00ZDc2LTkz"
+                             "OTAtNjQ4NWIxNjYyNDgzXkEyXkFqcGc@._"
+                             "V1_SX300.jpg"},
+            "The Godfather": {"rating": 9.0, "year": 1972,
+                              "poster": "https://m.media-amazon."
+                                "com/images/M/MV5BNGEwYjgwOGQtYj"
+                                "g5ZS00Njc1LTk2ZGEtM2QwZWQ2NjdhZ"
+                                "TE5XkEyXkFqcGc@._V1_SX300.jpg"}
         }
 
         try:
@@ -139,16 +153,13 @@ class StorageJson(IStorage):
             if json_data is None:
                 print(f"Error fetching data for {title}")
             else:
-                #movies[title] = json_data
-                print("hi")
+                print(json_data) ######
             #######------------------------------------------
                 self._update_json(movies)
 
         ## inform the user with the result
         if title in self.read_movies():
             print(f"{title} successfully added")
-        else:
-            print("Something went wrong, movie not added")
 
 
     def delete_movie(self): # menu command 3

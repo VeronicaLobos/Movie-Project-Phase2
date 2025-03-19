@@ -34,11 +34,11 @@ class IStorage(ABC):
                 with open(file=self.file_path, mode='w',
                     encoding='utf-8', newline='') as handle:
                     writer = csv.writer(handle)
-                    header = ["title", "rating", "year"]
+                    header = ["title", "rating",
+                              "year", "poster"]
                     writer.writerow(header)
-        except FileNotFoundError:
-            print("or here")
-            return self.read_movies()
+        except FileNotFoundError as e:
+            print(e)
 
 
     def check_title(self):

@@ -65,13 +65,27 @@ class StorageCsv(IStorage):
           "Titanic": {
             "rating": 9,
             "year": 1999
+            "poster": "https://m.media-amazon.com/
+                       images/...X300.jpg"
             }
         }
         """
         movie_list_example = [
-            {"title": "Titanic", "rating": 9.0, "year": 1999},
-            {"title": "Up", "rating": 8.3, "year": 2009},
-            {"title": "The Godfather", "rating": 9.0, "year": 1972}
+            {"title": "Titanic", "rating": 9.0, "year": 1999,
+                        "poster": "https://m.media-amazon.com/"
+                            "images/M/MV5BYzYyN2FiZmUtYWYzMy00M"
+                            "zViLWJkZTMtOGY1ZjgzNWMwN2YxXkEyXkF"
+                            "qcGc@._V1_SX300.jpg"},
+            {"title": "Up", "rating": 8.3, "year": 2009,
+                   "poster": "https://m.media-amazon.com/images/"
+                             "M/MV5BNmI1ZTc5MWMtMDYyOS00ZDc2LTkz"
+                             "OTAtNjQ4NWIxNjYyNDgzXkEyXkFqcGc@._"
+                             "V1_SX300.jpg"},
+            {"title": "The Godfather", "rating": 9.0, "year": 1972,
+                              "poster": "https://m.media-amazon."
+                                "com/images/M/MV5BNGEwYjgwOGQtYj"
+                                "g5ZS00Njc1LTk2ZGEtM2QwZWQ2NjdhZ"
+                                "TE5XkEyXkFqcGc@._V1_SX300.jpg"}
         ]
 
         try:
@@ -79,25 +93,19 @@ class StorageCsv(IStorage):
                 with open(file=self.file_path, mode='w',
                     encoding='utf-8', newline='') as handle:
                     writer = csv.writer(handle)
-                    header = ["title", "rating", "year"]
+                    header = ["title", "rating", "year", "poster"]
                     writer.writerow(header)
                     for movie in movie_list_example:
-                        writer.writerow([movie["title"],
-                            movie["rating"], movie["year"]])
+                        writer.writerow([movie["title"], movie["rating"],
+                                         movie["year"], movie["poster"]])
 
-                #print("Made a new csv file!")
-                return self._parse_csv_to_dict()
-
-            else:
-                #print("Found a csv file!")
-                return self._parse_csv_to_dict()
-
+            return self._parse_csv_to_dict()
         except FileNotFoundError:
             print(f"File not found: {self.file_path}")
             return {}
         except ValueError: #NoneType
             print(f"Error parsing data in {self.file_path}")
-            self._reset_csv_file()
+            self._reset_database()
             print(f"Database has been reset")
             return self._parse_csv_to_dict()
 
