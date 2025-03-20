@@ -2,6 +2,7 @@ import requests as req
 from dotenv import load_dotenv
 import os
 import json
+import urllib3.exceptions
 
 """
 A module for extracting movie data from OMDb API,
@@ -79,6 +80,13 @@ def _get_movie_info(movie_title):
         print("Check if the API key 'my_api_key' is set "
               "in your environment variables.")
         return {}
+    except req.exceptions.ConnectionError as e:
+        if isinstance(e.args[0], urllib3.exceptions.NameResolutionError):
+            print(f"Name Resolution Error: {e}")
+        else:
+            print(f"Connection Error: {e}")
+        print(e)
+        return {}
     except json.JSONDecodeError as e:
         print(f"JSON Decode Error: {e}")
         return {}
@@ -104,15 +112,20 @@ def get_new_movie_data(movie_title):
     """
     title = movie_title.replace(" ", "+")
     movie_info = _get_movie_info(title)
-    try:
-        rating = _get_movie_rating(movie_info)
-        year = int(movie_info.get("Year"))
-        poster_url = movie_info.get("Poster")
+    if movie_info != {}:
+        try:
+            title = str(movie_info.get("Title"))
+            rating = _get_movie_rating(movie_info)
+            year = int(movie_info.get("Year"))
+            poster_url = movie_info.get("Poster")
 
-        new_movie_dict = {'rating': rating,
-                          'year': year,
-                    'poster': poster_url}
-    except Exception as e:
-        print("Error during movie data processing: ", e)
-        return 0
-    return new_movie_dict
+            new_movie_dict = {'rating': rating,
+                              'year': year,
+                              'poster': poster_url}
+            return title, new_movie_dict
+        except TypeError as e:
+            print(e)
+        except UnboundLocalError as e:
+            print(e)
+            return {}
+

@@ -144,15 +144,17 @@ class StorageCsv(IStorage):
         """
         Adds a movie to the movie database.
 
-        Checks if there is data in the database, if so
-        Gets and checks title input.
-        Checks title exists in the database, if not
-        parses the data for the new movie into a dict
-        and appends it into the dictionary loaded from
-        the database. Updates the csv file with it.
+        Calls read_movies() in case there isn't a csv
+        file stored, generates and populates one with
+        example movies.
+        Prompts the user for a movie title, fetches movie
+        data (OMBd API), and adds it to the database if
+        the title is unique.
+        If the title already exists or data fetching fails,
+        an appropriate error message is displayed.
 
-        Prints a message to inform the user of the operation
-        result.
+        If the movie is successfully added, a confirmation
+        message is printed.
         """
         self.read_movies()
         movies = self.read_movies()
@@ -164,17 +166,15 @@ class StorageCsv(IStorage):
 
         new_movie_data = data_fetcher.get_new_movie_data(title)
         if new_movie_data is None:
-            print(f"Error fetching data for {title}")
+            print(f"Error fetching data, {title} not found in OMDb")
             return
 
-        movies[title] = new_movie_data
+        complete_title, movie_attributes = new_movie_data
+        movies[complete_title] = movie_attributes
         self._update_csv(movies)
 
-        ## inform the user with the result
-        if title in self.read_movies().keys():
+        if complete_title in self.read_movies().keys():
             print(f"{title} successfully added")
-        else:
-            print("Something went wrong, movie not added")
 
 
     def delete_movie(self): # menu command 3

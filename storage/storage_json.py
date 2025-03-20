@@ -131,35 +131,36 @@ class StorageJson(IStorage):
         """
         Adds a movie to the movie database.
 
-        Checks if there is data in the database, if so
-        Gets and checks title input.
-        Checks title exists in the database, if not
-        parses the data for the new movie into a dict
-        and appends it into the dictionary loaded from
-        the database. Updates the json file with it.
+        Calls read_movies() in case there isn't a json
+        file stored, generates and populates one with
+        example movies.
+        Prompts the user for a movie title, fetches movie
+        data (OMBd API), and adds it to the database if
+        the title is unique.
+        If the title already exists or data fetching fails,
+        an appropriate error message is displayed.
 
-        Prints a message to inform the user of the operation
-        result.
+        If the movie is successfully added, a confirmation
+        message is printed.
         """
+        self.read_movies()
         movies = self.read_movies()
-
-        if len(movies) == 0:
-            print("Currently there are no movies in the database")
 
         title = self.check_title()
         if title in movies.keys():
             print(f"{title} already exists in database")
             return
-        else:
-            new_movie_data = data_fetcher.get_new_movie_data(title)
-            if new_movie_data is None:
-                print(f"Error fetching data for {title}")
-            else:
-                movies[title] = new_movie_data
-                self._update_json(movies)
 
-        ## inform the user with the result
-        if title in self.read_movies():
+        new_movie_data = data_fetcher.get_new_movie_data(title)
+        if new_movie_data is None:
+            print(f"Error fetching data for {title}")
+            return
+
+        complete_title, movie_attributes = new_movie_data
+        movies[complete_title] = movie_attributes
+        self._update_json(movies)
+
+        if title in self.read_movies().keys():
             print(f"{title} successfully added")
 
 
