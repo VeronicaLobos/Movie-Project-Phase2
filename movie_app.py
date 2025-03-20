@@ -5,6 +5,7 @@ from a movie database and a movie API.
 """
 
 import sys
+import os
 import statistics
 import random
 
@@ -192,8 +193,45 @@ class MovieApp:
             print(f"{title}: {rating}")
 
 
-    def _generate_website(self): # menu command 9
-        pass
+    def _command_generate_website(self): # menu command 9
+        """
+        Generates a simple HTML website displaying
+        the movies stored in the database.
+        """
+        movies_dict = self._storage.read_movies()
+
+        if len(movies_dict) < 1 or movies_dict is None:
+            print("Currently there are no movies in the database.\n"
+                  "Please, add movies before generating website.")
+            return
+
+        movie_cards = str()
+        for title, movie_data in movies_dict.items():
+            year = movie_data.get("year")
+            poster = movie_data.get("poster")
+            movie_cards += f"""<li>
+                <div class="movie">
+                    <img class="movie-poster" src="{poster}" alt="{title}"/>
+                    <div class="movie-title"> {title} </div>
+                    <div class="movie-year"> {year} </div>
+                </div>
+            </li>"""
+
+        template_file_path = os.path.join("_static", "index_template.html")
+        with open(template_file_path, "r", encoding="utf-8") as handle:
+            html_content = handle.read()
+
+        placeholder_title = "__TEMPLATE_TITLE__"
+        placeholder_movies = "__TEMPLATE_MOVIE_GRID__"
+        html_content = html_content.replace(placeholder_title, "MS Movie App")
+        html_content = html_content.replace(placeholder_movies, movie_cards)
+
+        html_file_path = os.path.join("_static", "index.html")
+        with open(html_file_path, "w", encoding="utf-8") as handle:
+            handle.write(html_content)
+
+        print("Website was generated successfully.")
+
 
 
     ####### run() utility commands
@@ -216,7 +254,7 @@ class MovieApp:
             6: self._command_random_movie,  #tested
             7: self._command_search_movie,  #tested
             8: self._command_sort_by_rating,  #tested
-            9: self._generate_website, #wip
+            9: self._command_generate_website, #wip
         }
 
         try:
