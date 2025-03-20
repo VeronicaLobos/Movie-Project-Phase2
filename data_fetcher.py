@@ -1,14 +1,14 @@
-import requests as req
-from dotenv import load_dotenv
-import os
-import json
-import urllib3.exceptions
-
 """
 A module for extracting movie data from OMDb API,
 The Open Movie Database https://www.omdbapi.com/
 a RESTful web service to obtain movie information.
 """
+
+import os
+import json
+import requests as req
+from dotenv import load_dotenv
+import urllib3.exceptions
 
 
 def _get_movie_rating(movie_info):
@@ -26,7 +26,8 @@ def _get_movie_rating(movie_info):
     Handles cases in which 'Value' is incorrect or
     there is no rating from Internet Movie Database.
 
-    Returns a float.
+    Returns a float, or 0 when there is no rating
+    from IMDb.
     """
     all_ratings = movie_info.get('Ratings')
     for rating in all_ratings:
@@ -37,7 +38,7 @@ def _get_movie_rating(movie_info):
                 return rating_float
             except (ValueError, IndexError):
                 print("IMDb rating not found.")
-                return 0
+                return 0.0
 
 
 def _get_movie_info(movie_title):
@@ -56,8 +57,8 @@ def _get_movie_info(movie_title):
     error occurs.
     """
     load_dotenv()
-    API_KEY = os.getenv("my_api_key")
-    url = f"https://www.omdbapi.com/?t={movie_title}&apikey={API_KEY}"
+    api_key = os.getenv("my_api_key")
+    url = f"https://www.omdbapi.com/?t={movie_title}&apikey={api_key}"
 
     try:
         response = req.get(url)
@@ -68,32 +69,30 @@ def _get_movie_info(movie_title):
         if "Movie not found!" in json_string:
             print(json_string)
             return {}
-        else:
-            return movie_info_dict
+
+        return movie_info_dict
 
     except NameError as e:
         print(f"Error: {e}")
         print("Check URL and API key and try again.")
-        return {}
     except KeyError as e:
         print(f"Key Error: {e}")
         print("Check if the API key 'my_api_key' is set "
               "in your environment variables.")
-        return {}
+    except req.exceptions.Timeout:
+        print(f"Request timed out after 10 seconds for '{movie_title}'.")
     except req.exceptions.ConnectionError as e:
         if isinstance(e.args[0], urllib3.exceptions.NameResolutionError):
             print(f"Name Resolution Error: {e}")
         else:
             print(f"Connection Error: {e}")
         print(e)
-        return {}
     except json.JSONDecodeError as e:
         print(f"JSON Decode Error: {e}")
-        return {}
     except (req.exceptions.HTTPError,
             req.exceptions.RequestException) as e:
         print(f"HTTP Error: {e}")
-        return {}
+    return {}
 
 
 def get_new_movie_data(movie_title):
@@ -125,7 +124,7 @@ def get_new_movie_data(movie_title):
             return title, new_movie_dict
         except TypeError as e:
             print(e)
+            return {}
         except UnboundLocalError as e:
             print(e)
             return {}
-

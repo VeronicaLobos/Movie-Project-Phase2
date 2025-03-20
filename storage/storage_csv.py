@@ -1,15 +1,18 @@
-from storage.istorage import IStorage
-import data_fetcher
-import os
-import csv
-
-
 """
 This module loads/creates a Json file and performs
 CRUD operations on it (persistent storage).
 """
 
+import os
+import csv
+from storage.istorage import IStorage
+import data_fetcher
+
+
 class StorageCsv(IStorage):
+    """
+    A subclass of IStorage dedicated to CSV files.
+    """
     def __init__(self, file_path):
         super().__init__()
         self.file_path = file_path
@@ -41,17 +44,6 @@ class StorageCsv(IStorage):
         return movies_dictionary
 
 
-    def _reset_database(self):
-        """
-        A utility command for read_movies() method.
-
-        Deletes the contents of the CSV and populates
-        it with the example data.
-        Called as a result of corrupt files.
-        """
-        super()._reset_database()
-
-
     def read_movies(self):
         """
         Loads/creates a csv file containing data about movies.
@@ -74,9 +66,18 @@ class StorageCsv(IStorage):
         }
         """
         movie_list_example = [
-            {"title": "Titanic", "rating": 9.0, "year": 1999, "poster": "https://m.media-amazon.com/images/M/MV5BYzYyN2FiZmUtYWYzMy00MzViLWJkZTMtOGY1ZjgzNWMwN2YxXkEyXkFqcGc@._V1_SX300.jpg"},
-            {"title": "Up", "rating": 8.3, "year": 2009, "poster": "https://m.media-amazon.com/images/M/MV5BNmI1ZTc5MWMtMDYyOS00ZDc2LTkzOTAtNjQ4NWIxNjYyNDgzXkEyXkFqcGc@._V1_SX300.jpg"},
-            {"title": "The Godfather", "rating": 9.0, "year": 1972, "poster": "https://m.media-amazon.com/images/M/MV5BNGEwYjgwOGQtYjg5ZS00Njc1LTk2ZGEtM2QwZWQ2NjdhZTE5XkEyXkFqcGc@._V1_SX300.jpg"}
+            {"title": "Titanic", "rating": 9.0, "year": 1999,
+             "poster": "https://m.media-amazon.com/images/M/"
+                       "MV5BYzYyN2FiZmUtYWYzMy00MzViLWJkZTMtO"
+                       "GY1ZjgzNWMwN2YxXkEyXkFqcGc@._V1_SX300.jpg"},
+            {"title": "Up", "rating": 8.3, "year": 2009,
+             "poster": "https://m.media-amazon.com/images/M/"
+                       "MV5BNmI1ZTc5MWMtMDYyOS00ZDc2LTkzOTAtN"
+                       "jQ4NWIxNjYyNDgzXkEyXkFqcGc@._V1_SX300.jpg"},
+            {"title": "The Godfather", "rating": 9.0, "year": 1972,
+             "poster": "https://m.media-amazon.com/images/M/"
+                       "MV5BNGEwYjgwOGQtYjg5ZS00Njc1LTk2ZGEtM"
+                       "2QwZWQ2NjdhZTE5XkEyXkFqcGc@._V1_SX300.jpg"}
                             ]
 
         try:
@@ -87,7 +88,8 @@ class StorageCsv(IStorage):
                     header = ["title", "rating", "year", "poster"]
                     writer.writerow(header)
                     for movie in movie_list_example:
-                        writer.writerow([movie["title"], movie["rating"], movie["year"], movie["poster"]])
+                        writer.writerow([movie["title"], movie["rating"],
+                                         movie["year"], movie["poster"]])
 
             return self._parse_csv_to_dict()
         except FileNotFoundError:
@@ -96,7 +98,7 @@ class StorageCsv(IStorage):
         except ValueError: #NoneType
             print(f"Error parsing data in {self.file_path}")
             self._reset_database()
-            print(f"Database has been reset")
+            print("Database has been reset")
             return self._parse_csv_to_dict()
 
 
@@ -111,33 +113,11 @@ class StorageCsv(IStorage):
                 writer = csv.writer(handle)
                 writer.writerow(["title", "rating", "year", "poster"])
                 for movie_title, movie_data in movies_dict.items():
-                    writer.writerow([movie_title, movie_data.get("rating"), movie_data.get("year"), movie_data.get("poster")])
+                    writer.writerow([movie_title, movie_data.get("rating"),
+                                     movie_data.get("year"),
+                                     movie_data.get("poster")])
         except Exception as e:
             print(f"Database wasn't updated: {e}")
-
-
-    def check_title(self):
-        """
-        Utility command for checking str input in write,
-        delete, update commands.
-        """
-        return super().check_title()
-
-
-    def check_year(self):
-        """
-        Utility command for checking int input in write,
-        delete, update commands.
-        """
-        return super().check_year()
-
-
-    def check_rating(self):
-        """
-        Utility command for checking float input in write,
-        delete, update commands.
-        """
-        return super().check_rating()
 
 
     def add_movie(self): # menu command 2
@@ -199,8 +179,9 @@ class StorageCsv(IStorage):
             return
 
         title = self.check_title()
-        if not title in movies:
-            raise KeyError(f"Movie {title} doesn't exist!")
+        if not title in movies.keys():
+            print(f"Movie {title} doesn't exist!")
+            return
 
         del movies[title]
         self._update_csv(movies)
@@ -234,10 +215,10 @@ class StorageCsv(IStorage):
         if not title in movies:
             print(f"Movie {title} doesn't exist!")
             return
-        else:
-            new_rating = self.check_rating()
-            movies[title]["rating"] = new_rating
-            self._update_csv(movies)
+
+        new_rating = self.check_rating()
+        movies[title]["rating"] = new_rating
+        self._update_csv(movies)
 
         if self.read_movies()[title]["rating"] == new_rating:
             print(f"Movie {title} successfully updated")

@@ -1,14 +1,22 @@
+"""
+A user CLI interface containing a command dispatcher,
+with operations the user can perform on data retrieved
+from a movie database and a movie API.
+"""
+
 import sys
 import statistics
 import random
 
 
 class MovieApp:
+    """
+    A MovieApp class that contains all the logic of
+    the movie app (menu, commands etc.).
+    The MovieApp class will have a member (field)
+    from the type IStorage.
+    """
     def __init__(self, storage):
-        """
-        A MovieApp class that contains all the logic of the movie app (menu, commands etc.).
-        The MovieApp class will have a member (field) from the type IStorage.
-        """
         self._storage = storage
 
 
@@ -35,7 +43,7 @@ class MovieApp:
                       f" {attributes['rating']}")
 
         except (TypeError, FileNotFoundError) as e:
-            print("Data base might be currently empty or corrupted")
+            print("Data base might be currently empty or corrupted: ", e)
 
 
     def __get_rated_movies(self):
@@ -89,25 +97,27 @@ class MovieApp:
         ratings = [movie['rating'] for movie in movies_dict.values()]
 
         ## Step 3
-        average_rating = round(statistics.mean(sorted(ratings)), 2)
+        average_rating = round(statistics.mean(ratings), 2)
         print(f"\nAverage rating: {average_rating}")
-        median_rating = round(statistics.median(sorted(ratings)), 2)
+        median_rating = round(statistics.median(ratings), 2)
         print(f"Median rating: {median_rating}")
 
         ## Step 4
         rated_movies = self.__get_rated_movies()
+        if not rated_movies:
+            print("No rated movies found.")
+            return
         sorted_rated_movies = sorted(rated_movies,
                                       key=lambda rating: rating[0])
 
         ## Step 5
-        best_rating = max(sorted_rated_movies, key=lambda x: x[0])[0]
+        best_rating = sorted_rated_movies[-1][0]
         best_movies = [movie for movie in rated_movies if movie[0] == best_rating]
-        worst_rating = min(sorted_rated_movies, key=lambda x: x[0])[0]
+        worst_rating = sorted_rated_movies[0][0]
         worst_movies = [movie for movie in rated_movies if movie[0] == worst_rating]
 
         ## Step 6
-        best_worst = [("Best", best_movies), ("Worst", worst_movies)]
-        for extremes, movies in best_worst:
+        for extremes, movies in [("Best", best_movies), ("Worst", worst_movies)]:
             if len(movies) == 1:
                 print(f"{extremes} movie: {movies[0][1]}, {movies[0][0]}")
             else: ##  When more than one movie has that rating
@@ -212,7 +222,7 @@ class MovieApp:
         try:
             return commands[user_input]()
         except KeyError:
-            print(f"Choice currently not available")
+            print("Choice currently not available")
 
 
     def _exit_my_movies(self): # menu command 0

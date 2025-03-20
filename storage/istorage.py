@@ -1,18 +1,19 @@
-from abc import ABC, abstractmethod
-import json
-import csv
-
 """
 This module contains an abstract class IStorage
 which performs CRUD operations on persistent storage.
 """
+from abc import ABC, abstractmethod
+import json
+import csv
 
 
 class IStorage(ABC):
+    """
+    Abstract class for StorageCsv and StorageJson
+    """
     @abstractmethod
     def read_movies(self):
         """Loads a file containing data about movies"""
-        pass
 
 
     def _reset_database(self):
@@ -22,9 +23,10 @@ class IStorage(ABC):
         Deletes the contents of the CSV and populates
         it with the example data.
         Called as a result of corrupt files.
+
+        file_path corresponds to attribute from subclass
         """
         try:
-            #self.file_path = "data/movies.csv"
             print(f"Reseting {self.file_path}...")
             if ".json" in self.file_path:
                 with open(file=self.file_path, mode='w',
@@ -43,7 +45,7 @@ class IStorage(ABC):
 
     def check_title(self):
         """
-        A utility command for checking correct input
+        A utility command for checking correct str input
         for a movie's title. Keeps prompting for input.
         Returns a string.
         """
@@ -99,20 +101,19 @@ class IStorage(ABC):
         return movie_rating
 
 
-    #@abstractmethod
+    @abstractmethod
     def add_movie(self):
         """Adds a movie to a movie database
         Asks input for title, year, rating, poster"""
-        pass
 
-    #@abstractmethod
+
+    @abstractmethod
     def delete_movie(self):
         """Deletes a movie from a movie database
         Asks input for title"""
-        pass
 
-    #@abstractmethod
+
+    @abstractmethod
     def update_movie(self):
         """Updates a movie rating from a movie database
         Asks input for title, rating"""
-        pass

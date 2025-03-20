@@ -4,3 +4,5 @@ random
 json
 os
 requests
+dotenv
+urllib3.exceptions
