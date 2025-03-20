@@ -96,3 +96,6 @@ This project was developed as part of a bootcamp curriculum. Feel free to use it
 *   The `storage_json.py` and `storage_csv.py` files implement the `IStorage` interface.
 *   The program uses the `.env` file to get the API key. You'll need to include it for the command Add Movies to properly function.
 
+
+<img width="500" alt="Generated website preview" src="https://github.com/user-attachments/assets/23b372e5-00ac-48f0-935d-1cf5e7ea59e0" />
+
