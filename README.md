@@ -2,6 +2,8 @@
 
 This project is a Python-based application that manages a movie database. It allows users to interact with the database through a command-line interface (CLI), performing CRUD (Create, Read, Update, Delete) operations on movie data. The project fetches movie data from the OMDb API and stores it in either a **JSON** file (`movies.json`) or a **CSV** file (`data/movies.csv`) for persistent storage. It also includes a basic web page template to display movie information.
 
+<img width="500" alt="Generated website preview" style="display: block; margin: 0 auto" src="https://github.com/user-attachments/assets/23b372e5-00ac-48f0-935d-1cf5e7ea59e0" />
+
 ## Key Features
 
 *   **Movie Database Management:**
@@ -95,7 +97,3 @@ This project was developed as part of a bootcamp curriculum. Feel free to use it
 *   The `movies.json` and `movies.csv` files are created automatically when you run the application for the first time. No need to use the samples provided in `data\`.
 *   The `storage_json.py` and `storage_csv.py` files implement the `IStorage` interface.
 *   The program uses the `.env` file to get the API key. You'll need to include it for the command Add Movies to properly function.
-
-
-<img width="500" alt="Generated website preview" src="https://github.com/user-attachments/assets/23b372e5-00ac-48f0-935d-1cf5e7ea59e0" />
-
